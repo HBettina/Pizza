@@ -73,6 +73,13 @@ public class ClientDao implements Dao<Client> {
 
     @Override
     public void delete(Client client) {
-
+        try(
+                PreparedStatement s = engine.getConnection().prepareStatement("DELETE FROM vevo WHERE vazon = ?;");
+                ){
+            s.setLong(1, client.cid());
+            s.executeUpdate();
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 }

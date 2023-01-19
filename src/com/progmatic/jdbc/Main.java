@@ -19,8 +19,10 @@ public class Main {
         System.out.println("Fu(t)arok listaja");
         System.out.println("Piz(z)ak listaja");
         System.out.println("Ren(d)elesek listaja");
-        System.out.println("(K)ilepes");
         System.out.println("Uj (p)izza hozzáadása");
+        System.out.println();
+        System.out.println("\n(K)ilepes");
+
     }
 
     public void start() {
@@ -61,7 +63,6 @@ public class Main {
                     case "p" -> {
                         System.out.println("Add meg az új pizza sorszámát!");
                         Long ujPizzaSorsza = sc.nextLong();
-//                        Long ujPizzaSorsza2 = Long.valueOf(sc.nextInt());
                         sc.nextLine();
                         System.out.println("Add meg az új pizza nevét!");
                         String ujPizzaNev = sc.nextLine();
@@ -70,7 +71,6 @@ public class Main {
                         sc.nextLine();
                         Pizza ujPizza = new Pizza(ujPizzaSorsza, ujPizzaNev, ujPizzaAr);
                         controll.addPizza(ujPizza);
-//                        controll.pizzaDao.save(ujPizza);
                     }
                     default -> System.out.println("Ilyen menuelem nincs, kerem valasszon ujra.\n");
                 }
@@ -92,8 +92,8 @@ public class Main {
                 System.out.println("Not valid cid");
             }
         }
-       printAllCourier();
-        System.out.println("\n\nWhich Courier is order now?(Please answer with cid)");
+        printAllCourier();
+        System.out.println("\n Which Courier is order now?(Please answer with cid)");
         Courier courier;
         while (true) {
             try {
@@ -115,7 +115,7 @@ public class Main {
             short count = scanner.nextShort();
             scanner.nextLine();
             System.out.println("Want you continue?(\"exit\" to close any other to continue)");
-            if (scanner.nextLine().toUpperCase().equals("EXIT")) {
+            if (scanner.nextLine().equalsIgnoreCase("EXIT")) {
                 newOrder = false;
             }
             order.add(new OrderItem(controller.pizzaDao.get(pid),count));

@@ -87,9 +87,27 @@ public class PizzaDao implements Dao<Pizza> {
         }
     }
 
+    /**
+     * Params array must have two element. First is name of the pizza, second must be convertible to int, and it will be the price.
+     * @param pizza
+     * @param params
+     */
     @Override
     public void update(Pizza pizza, String[] params) {
-
+        if (params.length != 2){
+            return;
+        }
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("UPDATE pizza SET pazon = ?, pnev = ?, par = ? WHERE pazon = ?;");
+        ) {
+            s.setLong(1, pizza.pid());
+            s.setString(2, params[0]);
+            s.setInt(3, Integer.parseInt(params[1]));
+            s.setLong(4, pizza.pid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

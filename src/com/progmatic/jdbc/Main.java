@@ -1,14 +1,13 @@
 package com.progmatic.jdbc;
 
 import com.progmatic.jdbc.dao.ClientDao;
-import com.progmatic.jdbc.model.Client;
-import com.progmatic.jdbc.model.Courier;
-import com.progmatic.jdbc.model.Order;
-import com.progmatic.jdbc.model.Pizza;
+import com.progmatic.jdbc.model.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
@@ -38,22 +37,8 @@ public class Main {
             while (!(s = sc.nextLine()).equalsIgnoreCase("k")) {
                 switch (s.toLowerCase()) {
                     case "u" -> {
-                        printAllClient();
-                        System.out.println("Add meg a vevő azonosítóját!");
-                        Long cid = Long.parseLong(sc.nextLine());
-                        Client ujRendelesClient = controll.getAClient(cid);
-                        printAllCourier();
-                        System.out.println("Add meg a futár azonosítóját!");
-                        Long fazon = Long.parseLong(sc.nextLine());
-                        Courier newOrderCourier = controll.getACourier(fazon);
-                        printAllPizza();
-                        System.out.println("Add meg a választott pizza azonosítóját!");
-                        Long newOrderPizzaId = Long.parseLong(sc.nextLine());
-
-                        LocalDateTime newOrderDate = LocalDateTime.now();
+                        orderMenu(controll, sc);
                     }
-
-
                     case "s" ->
                         System.out.println("kereses");
 //                        this.startSearch(engine);
@@ -94,6 +79,48 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    private void orderMenu(Controller controller, Scanner scanner) {
+        printAllClient();
+        System.out.println("\n\nWhich Client is order now?(Please answer with cid)");
+        Client client;
+        while (true) {
+            try {
+                client = controller.clientDao.get(scanner.nextLong());
+                break;
+            } catch (NoSuchElementException e) {
+                System.out.println("Not valid cid");
+            }
+        }
+       printAllCourier();
+        System.out.println("\n\nWhich Courier is order now?(Please answer with cid)");
+        Courier courier;
+        while (true) {
+            try {
+                courier = controller.courierDao.get(scanner.nextLong());
+                break;
+            } catch (NoSuchElementException e) {
+                System.out.println("Not valid cid");
+            }
+        }
+        printAllPizza();
+        System.out.println("\n Which pizzas add to order?(Please select pid)");
+        List<OrderItem> order = new ArrayList<>();
+        boolean newOrder = true;
+        while (newOrder) {
+            System.out.println("Select pid");
+            long pid = scanner.nextLong();
+            scanner.nextLine();
+            System.out.println("How many from this pizza?");
+            short count = scanner.nextShort();
+            scanner.nextLine();
+            System.out.println("Want you continue?(\"exit\" to close any other to continue)");
+            if (scanner.nextLine().toUpperCase().equals("EXIT")) {
+                newOrder = false;
+            }
+            order.add(new OrderItem(controller.pizzaDao.get(pid),count));
+        }
+        controller.orderDao.save(new Order((long)controller.orderDao.getAll().size() + 1,client,courier,order, LocalDateTime.now()));
     }
     public void printAllClient(){
         try (

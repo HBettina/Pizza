@@ -19,7 +19,7 @@ public class Controller implements AutoCloseable {
         this.pizzaDao = new PizzaDao(this.engine);
         this.courierDao = new CourierDao(this.engine);
         this.clientDao = new ClientDao(this.engine);
-        this.orderItemDao = new OrderItemDao(this.engine, this.pizzaDao);
+        this.orderItemDao = new OrderItemDao(this.engine, this.pizzaDao, orderDao);
         this.orderDao = new OrderDao(this.engine, courierDao, clientDao, this.orderItemDao);
     }
 

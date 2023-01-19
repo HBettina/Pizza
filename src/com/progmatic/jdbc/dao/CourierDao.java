@@ -65,7 +65,14 @@ public class CourierDao implements Dao<Courier> {
 
     @Override
     public void delete(Courier courier) {
-
+        try(
+                PreparedStatement s = engine.getConnection().prepareStatement("DELETE FROM futar WHERE vazon = ?;");
+        ){
+            s.setLong(1, courier.cid());
+            s.executeUpdate();
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     private static Courier resultToCourier(ResultSet rs) throws SQLException {

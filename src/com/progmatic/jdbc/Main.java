@@ -81,6 +81,7 @@ public class Main {
         }
     }
     private void orderMenu(Controller controller, Scanner scanner) {
+        long newOrderId = (long)controller.orderDao.getAll().size() + 1;
         printAllClient();
         System.out.println("\n\nWhich Client is order now?(Please answer with cid)");
         Client client;
@@ -118,9 +119,9 @@ public class Main {
             if (scanner.nextLine().equalsIgnoreCase("EXIT")) {
                 newOrder = false;
             }
-            order.add(new OrderItem(controller.pizzaDao.get(pid),count));
+            order.add(new OrderItem(newOrderId, controller.pizzaDao.get(pid),count));
         }
-        controller.orderDao.save(new Order((long)controller.orderDao.getAll().size() + 1,client,courier,order, LocalDateTime.now()));
+        controller.addOrder(new Order(newOrderId,client,courier,order, LocalDateTime.now()));
     }
     public void printAllClient(){
         try (

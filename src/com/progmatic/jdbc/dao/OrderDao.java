@@ -93,6 +93,13 @@ public class OrderDao implements Dao<Order> {
 
     @Override
     public void delete(Order order) {
-
+        try(
+                PreparedStatement s = engine.getConnection().prepareStatement("DELETE FROM rendeles WHERE razon = ?;");
+        ){
+            s.setLong(1, order.oid());
+            s.executeUpdate();
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 }

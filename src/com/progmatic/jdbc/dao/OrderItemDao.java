@@ -13,10 +13,12 @@ public class OrderItemDao implements Dao<OrderItem> {
 
     private final DBEngine engine;
     private final PizzaDao pizzaDao;
+    private final OrderDao orderDao;
 
-    public OrderItemDao(DBEngine engine, PizzaDao pizzaDao) {
+    public OrderItemDao(DBEngine engine, PizzaDao pizzaDao, OrderDao orderDao) {
         this.engine = engine;
         this.pizzaDao = pizzaDao;
+        this.orderDao = orderDao;
     }
 
     @Override
@@ -48,14 +50,24 @@ public class OrderItemDao implements Dao<OrderItem> {
 
     private OrderItem resultToOrderItem(ResultSet rs) throws SQLException {
         return new OrderItem(
-            this.pizzaDao.get(rs.getLong("pazon")),
+                rs.getLong("razon"),
+                this.pizzaDao.get(rs.getLong("pazon")),
             rs.getShort("db")
         );
     }
 
     @Override
     public void save(OrderItem orderItem) {
-
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("INSERT INTO tetel (razon, pazon, db) VALUES (?,?,?);");
+        ){
+            s.setLong(1, orderItem.oid());
+            s.setLong(2, orderItem.pizza().pid());
+            s.setShort(3, orderItem.number());
+            s.executeUpdate();
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -65,6 +77,14 @@ public class OrderItemDao implements Dao<OrderItem> {
 
     @Override
     public void delete(OrderItem orderItem) {
-
+        try(
+                PreparedStatement s = engine.getConnection().prepareStatement("DELETE FROM tetel WHERE razon = ? AND pazon = ?;");
+        ){
+            s.setLong(1, orderItem.oid());
+            s.setLong(2, orderItem.pizza().pid());
+            s.executeUpdate();
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 }

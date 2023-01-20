@@ -70,9 +70,28 @@ public class OrderItemDao implements Dao<OrderItem> {
         }
     }
 
+    /**
+     * Params array must have two element. First is the pizza id(convertible to long), second must be convertible to sort, and it will be the count of pizzas.
+     * @param orderItem
+     * @param params
+     */
     @Override
     public void update(OrderItem orderItem, String[] params) {
-
+        if (params.length != 2){
+            return;
+        }
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("UPDATE tetel SET razon = ?, pazon = ?, db = ? WHERE razon = ? AND pazon = ?;");
+        ) {
+            s.setLong(1, orderItem.oid());
+            s.setLong(2,Long.parseLong(params[0]));
+            s.setShort(3, Short.parseShort(params[1]));
+            s.setLong(4, orderItem.oid());
+            s.setLong(5, orderItem.pizza().pid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

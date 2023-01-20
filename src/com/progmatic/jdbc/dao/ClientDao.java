@@ -66,9 +66,27 @@ public class ClientDao implements Dao<Client> {
 
     }
 
+    /**
+     * Wait for exactly 2 long params array. First is name, second is address.
+     * @param client
+     * @param params
+     */
     @Override
     public void update(Client client, String[] params) {
-
+        if (params.length != 2){
+            return;
+        }
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("UPDATE vevo SET vazon = ?, vnev = ?, vcim = ? WHERE vazon = ?;");
+        ) {
+            s.setLong(1, client.cid());
+            s.setString(2, params[0]);
+            s.setString(3, params[1]);
+            s.setLong(4, client.cid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

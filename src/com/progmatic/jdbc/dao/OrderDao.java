@@ -86,9 +86,29 @@ public class OrderDao implements Dao<Order> {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * params array: First is Client id(long), second is courier id(long), third is datum (LocalDateTime). After that every 2 pair is for orderItems update.
+     * @param order
+     * @param params
+     */
     @Override
     public void update(Order order, String[] params) {
-
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("UPDATE rendeles SET razon = ?, vazon = ?, fazon = ?, idopont = ? WHERE razon = ?;");
+        ) {
+            for (int i = 3; i < order.items().size(); i +=2){
+                orderItemDao.update(order.items().get((i-3) / 2), new String[]{params[i], params[i + 1]});
+            }
+            s.setLong(1, order.oid());
+            s.setLong(2, Long.parseLong(params[0]));//pazon
+            s.setLong(3, Long.parseLong(params[1]));//fazon
+            s.setTimestamp(4, Timestamp.valueOf(params[2]));
+            s.setLong(5, order.oid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

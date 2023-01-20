@@ -37,9 +37,14 @@ public class Controller implements AutoCloseable {
     public Client getAClient(long cid) {
         return this.clientDao.get(cid);
     }
+    public Pizza getAPizza(long pid) {
+        return this.pizzaDao.get(pid);
+    }
     public Courier getACourier(long fazon) {
         return this.courierDao.get(fazon);
     }
+    public Order getAnOrder(long oid) { return this.orderDao.get(oid); }
+    public OrderItem getAnOrderItem(long oid) { return this.orderItemDao.get(oid); }
 
     public List<Order> getAllOrder() {
         return this.orderDao.getAll();
@@ -51,6 +56,11 @@ public class Controller implements AutoCloseable {
     public void addOrder(Order order){
         this.orderDao.save(order);
     }
+    public void deletePizza(Pizza pizza) {this.pizzaDao.delete(pizza);}
+    public void deleteVevo(Client client) {this.clientDao.delete(client);}
+    public void deleteCourier(Courier courier) {this.courierDao.delete(courier);}
+    public void deleteOrder(Order order) {this.orderDao.delete(order);}
+    public void deleteOrderItem(OrderItem orderItem) {this.orderItemDao.delete(orderItem);}
     @Override
     public void close() throws Exception {
         if (engine != null && !engine.isClosed()) {

@@ -13,7 +13,6 @@ public class OrderDao implements Dao<Order> {
     DBEngine engine;
     CourierDao courierDao;
     ClientDao clientDao;
-
     OrderItemDao orderItemDao;
 
     public OrderDao(DBEngine engine, CourierDao courierDao, ClientDao clientDao, OrderItemDao orderItemDao) {
@@ -62,25 +61,14 @@ public class OrderDao implements Dao<Order> {
                 PreparedStatement s = engine.getConnection().prepareStatement("INSERT INTO rendeles VALUES (?,?,?,?);");
         ){
             for (OrderItem item : order.items()) {
-                saveOrderItem(item, order.oid());
+                orderItemDao.save(item);
+//                saveOrderItem(item, order.oid());
             }
             System.out.println(order.items());
             s.setLong(1,order.oid());
             s.setLong(2,order.client().cid());
             s.setLong(3,order.courier().cid());
             s.setTimestamp(4, Timestamp.valueOf(order.orderedAt()));
-            s.executeUpdate();
-        }catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-    private void saveOrderItem(OrderItem item, Long oid){
-        try (
-                PreparedStatement s = engine.getConnection().prepareStatement("INSERT INTO tetel (razon, pazon, db) VALUES (?,?,?);");
-        ){
-            s.setLong(1,oid);
-            s.setLong(2,item.pizza().pid());
-            s.setShort(3,item.number());
             s.executeUpdate();
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -96,6 +84,9 @@ public class OrderDao implements Dao<Order> {
         try(
                 PreparedStatement s = engine.getConnection().prepareStatement("DELETE FROM rendeles WHERE razon = ?;");
         ){
+            for (OrderItem orderItem: order.items()) {
+                orderItemDao.delete(orderItem);
+            }
             s.setLong(1, order.oid());
             s.executeUpdate();
         } catch (SQLException e){

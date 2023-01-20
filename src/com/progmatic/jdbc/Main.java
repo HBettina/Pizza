@@ -20,9 +20,21 @@ public class Main {
         System.out.println("Piz(z)ak listaja");
         System.out.println("Ren(d)elesek listaja");
         System.out.println("Uj (p)izza hozzáadása");
+        System.out.println("Tö(r)lés");
         System.out.println();
         System.out.println("\n(K)ilepes");
 
+    }
+    private void printDeleteSubMenu() {
+        System.out.print("""
+                                Add meg mit szeretnél törölni!
+                                Pizza(p)
+                                Vevő(v)
+                                Futár(f)
+                                Rendelés(r)
+                                Tétel(t)
+                                Visszalépés a főmenűbe(x)"""
+        );
     }
 
     public void start() {
@@ -71,6 +83,46 @@ public class Main {
                         sc.nextLine();
                         Pizza ujPizza = new Pizza(ujPizzaSorsza, ujPizzaNev, ujPizzaAr);
                         controll.addPizza(ujPizza);
+                    }
+                    case "r" -> {
+                        printDeleteSubMenu();
+                        while (!(s = sc.nextLine()).equalsIgnoreCase("x")) {
+                            switch (s.toLowerCase()) {
+                                case "p" -> {
+                                    printAllPizza();
+                                    System.out.println("Melyik pizzát szeretnéd törölni?(pid)");
+                                    long pid = Long.parseLong(sc.nextLine());
+                                    controll.deletePizza(controll.getAPizza(pid));
+                                }
+                                case "v" -> {
+                                    printAllClient();
+                                    System.out.println("Melyik vevőt szeretnéd törölni?(cid)");
+                                    long cid = Long.parseLong(sc.nextLine());
+                                    controll.deleteVevo(controll.getAClient(cid));
+                                }
+                                case "f" -> {
+                                    printAllCourier();
+                                    System.out.println("Melyik futárt szeretnéd törölni?(cid)");
+                                    long cid = Long.parseLong(sc.nextLine());
+                                    controll.deleteCourier(controll.getACourier(cid));
+                                }
+                                case "r" -> {
+                                    printAllOrder();
+                                    System.out.println("Melyik megrendelést szeretnéd törölni?(oid)");
+                                    long oid = Long.parseLong(sc.nextLine());
+                                    controll.deleteOrder(controll.getAnOrder(oid));
+                                }
+                                case "t" -> {
+                                    printAllOrder();
+                                    System.out.println("Melyik tételt szeretnéd törölni?(oid)");
+                                    long oid = Long.parseLong(sc.nextLine());
+                                    controll.deleteOrderItem(controll.getAnOrderItem(oid));
+                                }
+                                case "x" -> {
+                                }
+                                default -> System.out.println("Ilyen menuelem nincs, kerem valasszon ujra.\n");
+                            }
+                        }
                     }
                     default -> System.out.println("Ilyen menuelem nincs, kerem valasszon ujra.\n");
                 }
@@ -156,6 +208,19 @@ public class Main {
             List<Pizza> allP = controll.getAllPizza();
             for (Pizza p : allP) {
                 System.out.println(p);
+            }
+            System.out.println("\n");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void printAllOrder(){
+        try (
+                Controller controll = new Controller()
+        ) {
+            List<Order> allO = controll.getAllOrder();
+            for (Order o : allO) {
+                System.out.println(o);
             }
             System.out.println("\n");
         } catch (Exception e) {

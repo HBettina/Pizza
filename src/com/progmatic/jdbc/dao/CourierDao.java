@@ -58,9 +58,27 @@ public class CourierDao implements Dao<Courier> {
 
     }
 
+    /**
+     * Wait for exactly 2 long params array. First is name, second is telephone.
+     * @param courier
+     * @param params
+     */
     @Override
     public void update(Courier courier, String[] params) {
-
+        if (params.length != 2){
+            return;
+        }
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("UPDATE futar SET fazon = ?, fnev = ?, ftel = ? WHERE fazon = ?;");
+        ) {
+            s.setLong(1, courier.cid());
+            s.setString(2, params[0]);
+            s.setString(3, params[1]);
+            s.setLong(4, courier.cid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

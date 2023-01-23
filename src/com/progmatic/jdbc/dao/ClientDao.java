@@ -63,6 +63,19 @@ public class ClientDao implements Dao<Client> {
 
     @Override
     public void save(Client client) {
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("INSERT INTO vevo VALUES (?, ?, ?);");
+        ) {
+            System.out.println(client);
+            s.setLong(1, client.cid());
+            s.setString(2, client.name());
+            s.setString(3, client.address());
+            s.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
 
     }
 

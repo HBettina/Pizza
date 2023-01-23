@@ -55,6 +55,19 @@ public class CourierDao implements Dao<Courier> {
 
     @Override
     public void save(Courier courier) {
+        try (
+                PreparedStatement s = engine.getConnection().prepareStatement("INSERT INTO futar VALUES (?, ?, ?);");
+        ) {
+            System.out.println(courier);
+            s.setLong(1, courier.cid());
+            s.setString(2, courier.name());
+            s.setString(3, courier.tel());
+            s.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
 
     }
 
